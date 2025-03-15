@@ -10,7 +10,17 @@ char pass[] = "00000000";
 const char* host = "172.20.10.2";  // This should match the IP shown in the server console
 const int httpPort = 3000;  // Changed from 3001 to 3000 to match your server
 
-Servo myServo;
+Servo classificationServo;  // Renamed to be more descriptive
+Servo lidServo;             // New servo for the lid
+
+// Servo pins
+const int CLASSIFICATION_SERVO_PIN = 9;
+const int LID_SERVO_PIN = 10;       // Pin for the lid servo
+
+// Lid servo positions
+const int LID_CLOSED = 0;           // Lid closed position (degrees)
+const int LID_OPEN = 90;            // Lid open position (degrees)
+const int LID_OPEN_TIME = 2000;     // How long to keep the lid open (milliseconds)
 
 // Ultrasonic sensor pins
 const int TRIGGER_PIN = 7;
@@ -170,6 +180,15 @@ String triggerCaptureEvent() {
   return "";
 }
 
+// Function to operate the lid servo
+void operateLid() {
+  Serial.println("Opening lid...");
+  lidServo.write(LID_OPEN);
+  delay(LID_OPEN_TIME);
+  Serial.println("Closing lid...");
+  lidServo.write(LID_CLOSED);
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial); // Wait for Serial Monitor
@@ -197,8 +216,12 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  // Attach the servo to pin 9
-  myServo.attach(9);
+  // Attach the servos to their pins
+  classificationServo.attach(CLASSIFICATION_SERVO_PIN);
+  lidServo.attach(LID_SERVO_PIN);
+  
+  // Initialize lid to closed position
+  lidServo.write(LID_CLOSED);
   
   // Test the server connection at startup
   Serial.println("Testing server connection and trigger capture...");
@@ -238,16 +261,22 @@ void loop() {
       Serial.println("Unknown or empty classification received.");
     }
   
-    // Rotate the servo if a valid angle is set
+    // Rotate the classification servo if a valid angle is set
     if (angle > 0) {
-      myServo.write(angle);
-      Serial.print("Rotating servo to ");
+      classificationServo.write(angle);
+      Serial.print("Rotating classification servo to ");
       Serial.print(angle);
       Serial.println(" degrees");
+      
+      // Wait 1 second after classification servo rotates
+      delay(1000);
+      
+      // Operate the lid
+      operateLid();
     }
   
     // Wait a moment after processing to prevent rapid retriggers
-    delay(5000);
+    delay(3000);
   }
   
   // Check sensor every 500ms
