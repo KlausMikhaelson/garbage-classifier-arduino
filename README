@@ -1,1 +1,10 @@
+# BinBuddy.
+- We used PlatformIO in order to code the Arduino which basically uses C++;
+- The biggest problems that we faced were figuring out how to make the arduino to communicate with the environment, make it take actions depending on what's going on and what it sees around itself
+- Another problem we faced were lack of resources, since it was our first time working on a hardware project so we used a lot of different hacks and fortunately were able to make it work correctly!
 
+# Best functionality for me:
+- The most fun I had was to make the arduino communicate with the server and then the server opening up a socket connection with the client to capture details and classify the object and then sending it back to the server to classify it and sending a response to the arduino to get the category and amount of degrees it is supposed to rotate.
+
+
+Thanks!
